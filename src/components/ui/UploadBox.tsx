@@ -1,5 +1,21 @@
 "use client";
 
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  DragEndEvent,
+} from "@dnd-kit/core";
+
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+
+import SortableFileItem from "./SortableFileItem";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Trash2, UploadCloud } from "lucide-react";
@@ -11,6 +27,9 @@ import Button from "./Button";
 
 export default function UploadBox() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const sensors = useSensors(
+  useSensor(PointerSensor)
+);
   const [isMerging, setIsMerging] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -41,6 +60,23 @@ export default function UploadBox() {
       previous.filter((_, index) => index !== indexToRemove)
     );
   };
+  const handleDragEnd = (event: DragEndEvent) => {
+  const { active, over } = event;
+
+  if (!over || active.id === over.id) return;
+
+  setSelectedFiles((files) => {
+    const oldIndex = files.findIndex(
+      (_, index) => active.id === files[index].name + index
+    );
+
+    const newIndex = files.findIndex(
+      (_, index) => over.id === files[index].name + index
+    );
+
+    return arrayMove(files, oldIndex, newIndex);
+  });
+};
 
   const clearAllFiles = () => {
     setSelectedFiles([]);
