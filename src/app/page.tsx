@@ -1,6 +1,7 @@
 import Hero from "@/components/home/Hero";
 import UploadBox from "@/components/ui/UploadBox";
 import ToolsGrid from "@/components/home/ToolsGrid";
+import WhyChoose from "@/components/home/WhyChoose";
 
 export default function Home() {
   return (
@@ -22,7 +23,7 @@ export default function Home() {
       <section id="how-to-merge" />
 
       {/* Why Choose PDFNest + Supported Formats */}
-      <section id="features" />
+      <WhyChoose />
 
       {/* FAQ */}
       <section id="faq" />
