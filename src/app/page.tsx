@@ -1,5 +1,6 @@
 import Hero from "@/components/home/Hero";
 import UploadBox from "@/components/ui/UploadBox";
+import ToolsGrid from "@/components/home/ToolsGrid";
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
       </section>
 
       {/* PDF Tools Grid */}
-      <section id="tools" />
+      <ToolsGrid />
 
       {/* How to Merge PDFs (SEO) */}
       <section id="how-to-merge" />
