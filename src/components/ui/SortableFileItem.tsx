@@ -24,6 +24,7 @@ export default function SortableFileItem({
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({
     id: file.name + index,
   });
@@ -37,15 +38,17 @@ export default function SortableFileItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm"
+      {...attributes}
+      {...listeners}
+      className={`flex items-center justify-between rounded-lg bg-white p-4 shadow-sm transition-all duration-200 ${
+        isDragging
+          ? "cursor-grabbing ring-2 ring-blue-400 opacity-80 shadow-lg"
+          : "cursor-grab hover:shadow-md hover:-translate-y-0.5 active:shadow-lg"
+      }`}
     >
       <div className="flex items-center gap-4">
 
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab text-gray-400"
-        >
+        <div className="text-gray-400">
           <GripVertical size={20} />
         </div>
 
@@ -62,7 +65,8 @@ export default function SortableFileItem({
 
       <button
         onClick={() => onRemove(index)}
-        className="rounded-lg p-2 text-red-500 hover:bg-red-50"
+        onPointerDown={(e) => e.stopPropagation()}
+        className="rounded-lg p-2 text-red-500 hover:bg-red-50 transition-colors duration-200"
       >
         <Trash2 size={18} />
       </button>

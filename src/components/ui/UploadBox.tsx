@@ -18,7 +18,7 @@ import {
 import SortableFileItem from "./SortableFileItem";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Trash2, UploadCloud } from "lucide-react";
+import { UploadCloud } from "lucide-react";
 import { saveAs } from "file-saver";
 import { toast } from "sonner";
 
@@ -91,9 +91,9 @@ export default function UploadBox() {
     try {
       setIsMerging(true);
 
-      const mergedBytes = await mergePdf(selectedFiles);
+const mergedBytes = await mergePdf(selectedFiles);
 
-      const blob = new Blob([mergedBytes], {
+      const blob = new Blob([mergedBytes.buffer as ArrayBuffer], {
         type: "application/pdf",
       });
 
@@ -185,31 +185,27 @@ export default function UploadBox() {
 
           </div>
 
-          <div className="space-y-3">
-            {selectedFiles.map((file, index) => (
-              <div
-                key={`${file.name}-${index}`}
-                className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm"
-              >
-                <div>
-                  <p className="font-medium">
-                    📄 {file.name}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => removeFile(index)}
-                  className="rounded-lg p-2 text-red-500 transition hover:bg-red-50"
-                >
-                  <Trash2 size={18} />
-                </button>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={selectedFiles.map((file, index) => file.name + index)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-3">
+                {selectedFiles.map((file, index) => (
+                  <SortableFileItem
+                    key={file.name + index}
+                    file={file}
+                    index={index}
+                    onRemove={removeFile}
+                  />
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
 
         </div>
       )}
