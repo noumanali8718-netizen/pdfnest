@@ -117,20 +117,21 @@ const mergedBytes = await mergePdf(selectedFiles);
     <div className="mx-auto mt-16 max-w-3xl">
       <div
         {...getRootProps()}
-        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition ${
+        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition-all duration-300 sm:p-14 ${
           isDragActive
-            ? "border-blue-600 bg-blue-50"
-            : "border-blue-300 bg-white"
+            ? "scale-[1.02] border-blue-500 bg-blue-50/80 shadow-lg shadow-blue-100"
+            : "border-blue-300 bg-white hover:border-blue-400 hover:bg-blue-50/40 hover:shadow-lg hover:shadow-blue-100/60"
         }`}
       >
         <input {...getInputProps()} />
 
         <UploadCloud
           size={60}
-          className="mx-auto text-blue-600"
+          strokeWidth={1.5}
+          className="mx-auto text-blue-600 transition-transform duration-300"
         />
 
-        <h2 className="mt-6 text-2xl font-bold text-gray-900">
+        <h2 className="mt-6 text-2xl font-bold tracking-tight text-gray-900">
           {isDragActive
             ? "Drop your PDFs here"
             : "Drag & Drop your PDFs"}
@@ -148,17 +149,17 @@ const mergedBytes = await mergePdf(selectedFiles);
       </div>
 
       {selectedFiles.length > 0 && (
-        <div className="mt-8 rounded-xl border bg-gray-50 p-6">
+        <div className="mt-8 rounded-2xl border border-gray-200/70 bg-gray-50 p-6 sm:p-8">
 
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
 
             <div>
-              <p className="font-semibold text-gray-900">
+              <p className="text-sm font-semibold text-gray-900">
                 {selectedFiles.length} File
                 {selectedFiles.length > 1 ? "s" : ""}
               </p>
 
-              <p className="text-sm text-gray-500">
+              <p className="mt-0.5 text-sm text-gray-500">
                 Total Size: {(totalSize / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>

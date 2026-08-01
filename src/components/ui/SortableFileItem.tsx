@@ -40,10 +40,10 @@ export default function SortableFileItem({
       style={style}
       {...attributes}
       {...listeners}
-      className={`flex items-center justify-between rounded-lg bg-white p-4 shadow-sm transition-all duration-200 ${
+      className={`flex items-center justify-between rounded-xl border bg-white p-4 shadow-sm transition-all duration-200 ${
         isDragging
-          ? "cursor-grabbing ring-2 ring-blue-400 opacity-80 shadow-lg"
-          : "cursor-grab hover:shadow-md hover:-translate-y-0.5 active:shadow-lg"
+          ? "z-10 cursor-grabbing border-blue-200 opacity-90 shadow-lg ring-2 ring-blue-400"
+          : "cursor-grab border-gray-200/70 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md active:shadow-lg"
       }`}
     >
       <div className="flex items-center gap-4">
@@ -53,11 +53,11 @@ export default function SortableFileItem({
         </div>
 
         <div>
-          <p className="font-medium">
+          <p className="text-sm font-medium text-gray-900">
             📄 {file.name}
           </p>
 
-          <p className="text-sm text-gray-500">
+          <p className="mt-0.5 text-xs text-gray-500">
             {formatFileSize(file.size)}
           </p>
         </div>
@@ -66,7 +66,8 @@ export default function SortableFileItem({
       <button
         onClick={() => onRemove(index)}
         onPointerDown={(e) => e.stopPropagation()}
-        className="rounded-lg p-2 text-red-500 hover:bg-red-50 transition-colors duration-200"
+        aria-label={`Remove ${file.name}`}
+        className="rounded-lg p-2 text-red-500 transition-colors duration-200 hover:bg-red-50"
       >
         <Trash2 size={18} />
       </button>

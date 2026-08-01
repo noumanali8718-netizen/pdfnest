@@ -19,15 +19,15 @@ export default function Hero() {
       id="hero"
       className="relative overflow-hidden bg-gradient-to-b from-white via-white to-slate-50"
     >
-      <div className="mx-auto flex max-w-7xl flex-col items-center px-6 pt-28 pb-16 text-center md:pt-36">
+      <div className="mx-auto flex max-w-5xl flex-col items-center px-6 pt-32 pb-24 text-center md:pt-40">
         {/* Badge */}
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-4 py-1.5 text-sm font-medium text-blue-700">
+        <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700 shadow-sm">
           <Sparkles size={14} />
           Free &bull; Secure &bull; No Registration Required
         </span>
 
         {/* Headline */}
-        <h1 className="mt-8 max-w-4xl text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1 className="mt-8 max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-7xl">
           Your PDFs, Perfected.
           <br />
           <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
@@ -36,7 +36,7 @@ export default function Hero() {
         </h1>
 
         {/* Subheadline */}
-        <p className="mt-6 max-w-2xl text-base text-gray-600 sm:text-lg md:text-xl">
+        <p className="mt-6 max-w-2xl text-base leading-relaxed text-gray-600 sm:text-lg md:text-xl">
           Merge, split, compress, convert and edit PDFs directly in your browser.
           No uploads. No registration. Just tools that work.
         </p>
@@ -53,18 +53,38 @@ export default function Hero() {
         </div>
 
         {/* Trust badges */}
-        <div className="mt-14 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-gray-500">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="text-green-500">✓</span> 100% Free
+        <div className="mt-16 flex flex-wrap justify-center gap-x-10 gap-y-4 text-sm font-medium text-gray-600">
+          <span className="inline-flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100">
+              <svg viewBox="0 0 12 12" fill="none" className="h-3 w-3 text-green-600">
+                <path d="M2.5 6l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            100% Free
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="text-green-500">✓</span> No Upload Required
+          <span className="inline-flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100">
+              <svg viewBox="0 0 12 12" fill="none" className="h-3 w-3 text-green-600">
+                <path d="M2.5 6l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            No Upload Required
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="text-green-500">✓</span> Privacy First
+          <span className="inline-flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100">
+              <svg viewBox="0 0 12 12" fill="none" className="h-3 w-3 text-green-600">
+                <path d="M2.5 6l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            Privacy First
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="text-green-500">✓</span> Works Anywhere
+          <span className="inline-flex items-center gap-2">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100">
+              <svg viewBox="0 0 12 12" fill="none" className="h-3 w-3 text-green-600">
+                <path d="M2.5 6l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            Works Anywhere
           </span>
         </div>
       </div>
