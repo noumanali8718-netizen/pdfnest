@@ -17,6 +17,8 @@ import {
   Shield,
   Lock,
 } from "lucide-react";
+import SectionHeading from "@/components/ui/SectionHeading";
+import { cardBaseClass, iconBoxClass } from "@/lib/uiClasses";
 
 type Tool = {
   icon: typeof Files;
@@ -122,15 +124,10 @@ export default function ToolsGrid() {
   return (
     <section id="tools" className="bg-white py-24 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-            Everything you need to work with PDFs
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-gray-500">
-            Powerful PDF tools designed for speed, privacy and simplicity.
-          </p>
-        </div>
+        <SectionHeading
+          title="Everything you need to work with PDFs"
+          subtitle="Powerful PDF tools designed for speed, privacy and simplicity."
+        />
 
         {/* Tools Grid */}
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -139,12 +136,9 @@ export default function ToolsGrid() {
             const isAvailable = tool.status === "available";
 
             return (
-              <div
-                key={tool.title}
-                className="group relative rounded-2xl border border-gray-200/70 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-xl hover:shadow-gray-200/60"
-              >
+              <article key={tool.title} className={`${cardBaseClass} relative p-6`}>
                 {/* Icon */}
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100 transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600">
+                <div className={`${iconBoxClass} mb-4`}>
                   <Icon size={24} />
                 </div>
 
@@ -172,7 +166,7 @@ export default function ToolsGrid() {
                     </span>
                   )}
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>

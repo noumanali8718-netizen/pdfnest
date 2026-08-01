@@ -8,6 +8,8 @@ import {
   Laptop,
   BadgeCheck,
 } from "lucide-react";
+import SectionHeading from "@/components/ui/SectionHeading";
+import { cardBaseClass, iconBoxClass } from "@/lib/uiClasses";
 
 type Feature = {
   icon: typeof ShieldCheck;
@@ -58,16 +60,10 @@ export default function WhyChoose() {
   return (
     <section id="features" className="bg-white py-24 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-            Why Choose PDFNest
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-gray-500">
-            Fast, private, and reliable PDF tools built to simplify your
-            workflow.
-          </p>
-        </div>
+        <SectionHeading
+          title="Why Choose PDFNest"
+          subtitle="Fast, private, and reliable PDF tools built to simplify your workflow."
+        />
 
         {/* Features Grid */}
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -75,12 +71,9 @@ export default function WhyChoose() {
             const Icon = feature.icon;
 
             return (
-              <div
-                key={feature.title}
-                className="group rounded-2xl border border-gray-200/70 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-xl hover:shadow-gray-200/60"
-              >
+              <article key={feature.title} className={`${cardBaseClass} p-8`}>
                 {/* Icon */}
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100 transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600">
+                <div className={`${iconBoxClass} mb-5`}>
                   <Icon size={24} />
                 </div>
 
@@ -93,7 +86,7 @@ export default function WhyChoose() {
                 <p className="mt-3 text-sm leading-relaxed text-gray-500">
                   {feature.description}
                 </p>
-              </div>
+              </article>
             );
           })}
         </div>

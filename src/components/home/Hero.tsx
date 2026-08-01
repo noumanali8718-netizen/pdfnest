@@ -21,7 +21,7 @@ export default function Hero() {
     >
       <div className="mx-auto flex max-w-5xl flex-col items-center px-6 pt-32 pb-24 text-center md:pt-40">
         {/* Badge */}
-        <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700 shadow-sm">
+        <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700 shadow-sm transition-all duration-150 hover:border-blue-200 hover:bg-blue-100/70">
           <Sparkles size={14} />
           Free &bull; Secure &bull; No Registration Required
         </span>

@@ -24,6 +24,34 @@ function XIcon({ className }: { className?: string }) {
   );
 }
 
+const footerLinkClass =
+  "inline-block rounded-md text-sm text-slate-400 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400";
+
+function LinkColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: string[];
+}) {
+  return (
+    <nav aria-label={title}>
+      <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+        {title}
+      </h3>
+      <ul className="mt-5 space-y-3">
+        {links.map((link) => (
+          <li key={link}>
+            <a href="#" className={footerLinkClass}>
+              {link}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 const toolsLinks = [
   "Merge PDF",
   "Split PDF",
@@ -72,14 +100,14 @@ export default function Footer() {
               <a
                 href="#"
                 aria-label="GitHub"
-                className="rounded-lg bg-slate-800 p-2.5 text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-700 hover:text-white"
+                className="rounded-lg bg-slate-800 p-2.5 text-slate-300 transition-all duration-150 hover:-translate-y-0.5 hover:bg-slate-700 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
               >
                 <GithubIcon className="h-4 w-4" />
               </a>
               <a
                 href="#"
                 aria-label="X (Twitter)"
-                className="rounded-lg bg-slate-800 p-2.5 text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-700 hover:text-white"
+                className="rounded-lg bg-slate-800 p-2.5 text-slate-300 transition-all duration-150 hover:-translate-y-0.5 hover:bg-slate-700 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
               >
                 <XIcon className="h-4 w-4" />
               </a>
@@ -87,61 +115,13 @@ export default function Footer() {
           </div>
 
           {/* Column 2 — Tools */}
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
-              Tools
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {toolsLinks.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
-                    className="text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <LinkColumn title="Tools" links={toolsLinks} />
 
           {/* Column 3 — Resources */}
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
-              Resources
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {resourceLinks.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
-                    className="text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <LinkColumn title="Resources" links={resourceLinks} />
 
           {/* Column 4 — Company */}
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
-              Company
-            </h3>
-            <ul className="mt-5 space-y-3">
-              {companyLinks.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
-                    className="text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <LinkColumn title="Company" links={companyLinks} />
         </div>
 
         {/* Bottom Bar */}

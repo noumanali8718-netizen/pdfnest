@@ -1,9 +1,8 @@
 "use client";
+import { memo } from "react";
 import { formatFileSize } from "@/lib/fileUtils";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  useSortable,
-} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 
 import { Trash2, GripVertical } from "lucide-react";
 
@@ -13,7 +12,7 @@ type Props = {
   onRemove: (index: number) => void;
 };
 
-export default function SortableFileItem({
+function SortableFileItemBase({
   file,
   index,
   onRemove,
@@ -40,20 +39,20 @@ export default function SortableFileItem({
       style={style}
       {...attributes}
       {...listeners}
-      className={`flex items-center justify-between rounded-xl border bg-white p-4 shadow-sm transition-all duration-200 ${
+      className={`flex items-center justify-between rounded-xl border bg-white p-4 shadow-sm transition-all duration-150 ${
         isDragging
-          ? "z-10 cursor-grabbing border-blue-200 opacity-90 shadow-lg ring-2 ring-blue-400"
+          ? "z-10 scale-[1.02] cursor-grabbing border-blue-200 opacity-90 shadow-xl shadow-blue-100 ring-2 ring-blue-400"
           : "cursor-grab border-gray-200/70 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md active:shadow-lg"
       }`}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex min-w-0 items-center gap-3 sm:gap-4">
 
-        <div className="text-gray-400">
+        <div className="shrink-0 text-gray-400">
           <GripVertical size={20} />
         </div>
 
-        <div>
-          <p className="text-sm font-medium text-gray-900">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium text-gray-900">
             📄 {file.name}
           </p>
 
@@ -67,10 +66,20 @@ export default function SortableFileItem({
         onClick={() => onRemove(index)}
         onPointerDown={(e) => e.stopPropagation()}
         aria-label={`Remove ${file.name}`}
-        className="rounded-lg p-2 text-red-500 transition-colors duration-200 hover:bg-red-50"
+        className="ml-2 shrink-0 rounded-lg p-2.5 text-red-500 transition-colors duration-150 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
       >
         <Trash2 size={18} />
       </button>
     </div>
   );
 }
+
+// Memoized: file name/size are stable, so items only need to re-render
+// when their index or the remove handler changes.
+export default memo(SortableFileItemBase, (prev, next) => {
+  return (
+    prev.file === next.file &&
+    prev.index === next.index &&
+    prev.onRemove === next.onRemove
+  );
+});

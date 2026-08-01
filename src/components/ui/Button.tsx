@@ -1,10 +1,14 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
+
 type ButtonProps = {
   children: React.ReactNode;
   onClick?: () => void;
   variant?: "primary" | "secondary";
   disabled?: boolean;
+  loading?: boolean;
+  className?: string;
 };
 
 export default function Button({
@@ -12,9 +16,11 @@ export default function Button({
   onClick,
   variant = "primary",
   disabled = false,
+  loading = false,
+  className = "",
 }: ButtonProps) {
   const baseClasses =
-    "inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:scale-[0.98] disabled:pointer-events-none";
+    "inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:scale-[0.98] disabled:pointer-events-none";
 
   const variants = {
     primary:
@@ -27,10 +33,18 @@ export default function Button({
     <button
       type="button"
       onClick={onClick}
-      disabled={disabled}
-      className={`${baseClasses} ${variants[variant]}`}
+      disabled={disabled || loading}
+      aria-busy={loading}
+      className={`${baseClasses} ${variants[variant]} ${className}`}
     >
-      {children}
+      {loading ? (
+        <>
+          <Loader2 size={16} className="animate-spin" />
+          {children}
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 }

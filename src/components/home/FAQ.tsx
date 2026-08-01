@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 type FaqItem = {
   question: string;
@@ -49,15 +50,10 @@ export default function FAQ() {
   return (
     <section id="faq" className="bg-slate-50 py-24 md:py-28">
       <div className="mx-auto max-w-3xl px-6">
-        {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-            Frequently Asked Questions
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-gray-500">
-            Everything you need to know about using PDFNest.
-          </p>
-        </div>
+        <SectionHeading
+          title="Frequently Asked Questions"
+          subtitle="Everything you need to know about using PDFNest."
+        />
 
         {/* FAQ List */}
         <div className="mt-16 space-y-4">
@@ -80,7 +76,7 @@ export default function FAQ() {
                   aria-expanded={isOpen}
                   aria-controls={`faq-panel-${index}`}
                   id={`faq-button-${index}`}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors duration-200 hover:bg-gray-50"
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors duration-150 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                 >
                   <span
                     className={`text-base font-semibold transition-colors duration-200 ${

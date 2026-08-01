@@ -16,7 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 
 import SortableFileItem from "./SortableFileItem";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 import { saveAs } from "file-saver";
@@ -27,10 +27,8 @@ import Button from "./Button";
 
 export default function UploadBox() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const sensors = useSensors(
-  useSensor(PointerSensor)
-);
   const [isMerging, setIsMerging] = useState(false);
+  const sensors = useSensors(useSensor(PointerSensor));
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -38,6 +36,11 @@ export default function UploadBox() {
         ...previous,
         ...acceptedFiles,
       ]);
+      toast.success(
+        acceptedFiles.length === 1
+          ? "1 PDF file added"
+          : `${acceptedFiles.length} PDF files added`
+      );
     }
   }, []);
 
@@ -55,36 +58,42 @@ export default function UploadBox() {
     },
   });
 
-  const removeFile = (indexToRemove: number) => {
+  const removeFile = useCallback((indexToRemove: number) => {
     setSelectedFiles((previous) =>
       previous.filter((_, index) => index !== indexToRemove)
     );
-  };
-  const handleDragEnd = (event: DragEndEvent) => {
-  const { active, over } = event;
+  }, []);
 
-  if (!over || active.id === over.id) return;
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
 
-  setSelectedFiles((files) => {
-    const oldIndex = files.findIndex(
-      (_, index) => active.id === files[index].name + index
-    );
+    if (!over || active.id === over.id) return;
 
-    const newIndex = files.findIndex(
-      (_, index) => over.id === files[index].name + index
-    );
+    setSelectedFiles((files) => {
+      const oldIndex = files.findIndex(
+        (_, index) => active.id === files[index].name + index
+      );
 
-    return arrayMove(files, oldIndex, newIndex);
-  });
-};
+      const newIndex = files.findIndex(
+        (_, index) => over.id === files[index].name + index
+      );
 
-  const clearAllFiles = () => {
+      return arrayMove(files, oldIndex, newIndex);
+    });
+  }, []);
+
+  const clearAllFiles = useCallback(() => {
     setSelectedFiles([]);
-  };
+  }, []);
+
+  const sortableItems = useMemo(
+    () => selectedFiles.map((file, index) => file.name + index),
+    [selectedFiles]
+  );
 
   const handleMergePdf = async () => {
     if (selectedFiles.length < 2) {
-      toast.error("Please select at least 2 PDF files.");
+      toast.error("Please select at least two PDF files to merge.");
       return;
     }
 
@@ -99,10 +108,10 @@ const mergedBytes = await mergePdf(selectedFiles);
 
       saveAs(blob, "merged.pdf");
 
-      toast.success("PDF merged successfully!");
+      toast.success("Your PDFs have been merged successfully.");
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong while merging.");
+      toast.error("Merge failed. Please try again.");
     } finally {
       setIsMerging(false);
     }
@@ -117,7 +126,7 @@ const mergedBytes = await mergePdf(selectedFiles);
     <div className="mx-auto mt-16 max-w-3xl">
       <div
         {...getRootProps()}
-        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition-all duration-300 sm:p-14 ${
+        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition-all duration-150 sm:p-14 ${
           isDragActive
             ? "scale-[1.02] border-blue-500 bg-blue-50/80 shadow-lg shadow-blue-100"
             : "border-blue-300 bg-white hover:border-blue-400 hover:bg-blue-50/40 hover:shadow-lg hover:shadow-blue-100/60"
@@ -128,7 +137,9 @@ const mergedBytes = await mergePdf(selectedFiles);
         <UploadCloud
           size={60}
           strokeWidth={1.5}
-          className="mx-auto text-blue-600 transition-transform duration-300"
+          className={`mx-auto text-blue-600 transition-transform duration-150 ${
+            isDragActive ? "scale-110" : ""
+          }`}
         />
 
         <h2 className="mt-6 text-2xl font-bold tracking-tight text-gray-900">
@@ -141,6 +152,10 @@ const mergedBytes = await mergePdf(selectedFiles);
           or click the button below
         </p>
 
+        <p className="mt-6 text-xs text-gray-400">
+          Up to your device&apos;s memory limit &bull; No upload required &bull; PDFs only
+        </p>
+
         <div className="mt-8">
           <Button onClick={open}>
             Select PDF Files
@@ -148,7 +163,7 @@ const mergedBytes = await mergePdf(selectedFiles);
         </div>
       </div>
 
-      {selectedFiles.length > 0 && (
+      {selectedFiles.length > 0 ? (
         <div className="mt-8 rounded-2xl border border-gray-200/70 bg-gray-50 p-6 sm:p-8">
 
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -176,10 +191,9 @@ const mergedBytes = await mergePdf(selectedFiles);
               <Button
                 onClick={handleMergePdf}
                 disabled={isMerging}
+                loading={isMerging}
               >
-                {isMerging
-                  ? "Merging..."
-                  : "Merge PDFs"}
+                {isMerging ? "Merging" : "Merge PDFs"}
               </Button>
 
             </div>
@@ -192,7 +206,7 @@ const mergedBytes = await mergePdf(selectedFiles);
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={selectedFiles.map((file, index) => file.name + index)}
+              items={sortableItems}
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-3">
@@ -208,8 +222,12 @@ const mergedBytes = await mergePdf(selectedFiles);
             </SortableContext>
           </DndContext>
 
+          <p className="mt-4 text-center text-xs text-gray-400">
+            Drag files to reorder them before merging
+          </p>
+
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
