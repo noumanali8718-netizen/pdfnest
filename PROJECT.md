@@ -28,7 +28,8 @@ Notifications
 - Sonner
 
 PDF Processing
-- pdf-lib
+- @cantoo/pdf-lib
+- pdfjs-dist (client-side PDF page rasterization for PDF → Images)
 
 File Upload
 - react-dropzone
@@ -67,6 +68,12 @@ Version Control
 
 ✅ Toast Notifications
 
+✅ PDF to Images (JPG / PNG)
+
+✅ Images to PDF (JPG / PNG / WEBP / BMP / GIF)
+
+✅ Protect PDF (password encryption + permission presets)
+
 ---
 
 # Planned Features
@@ -81,11 +88,9 @@ Version Control
 - Reorder Pages
 - PDF to Word
 - Word to PDF
-- PDF to JPG
 - JPG to PDF
 - OCR
 - Watermark PDF
-- Protect PDF
 - Unlock PDF
 
 ---
@@ -277,7 +282,10 @@ Phase 7
 Reorder Pages
 
 Phase 8
-PDF Conversion
+✔ PDF Conversion (PDF to Images · Images to PDF)
+
+Phase 8.1
+✔ PDF Security (Protect PDF)
 
 Phase 9
 Authentication

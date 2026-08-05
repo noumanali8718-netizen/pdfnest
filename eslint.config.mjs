@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Static assets served from `public/`, including the vendored
+    // pdf.js worker (`pdf.worker.min.mjs`), must not be linted.
+    "public/**",
   ]),
 ]);
 

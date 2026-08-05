@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Files,
   Scissors,
@@ -8,6 +9,7 @@ import {
   FileSearch,
   FileX,
   ArrowUpDown,
+  Hash,
   FileText,
   FileType,
   Image,
@@ -25,6 +27,7 @@ type Tool = {
   title: string;
   description: string;
   status: "available" | "coming-soon";
+  href?: string;
 };
 
 const tools: Tool[] = [
@@ -33,42 +36,56 @@ const tools: Tool[] = [
     title: "Merge PDF",
     description: "Combine multiple PDFs into one document in seconds.",
     status: "available",
+    href: "/",
   },
   {
     icon: Scissors,
     title: "Split PDF",
     description: "Separate pages into individual PDF files instantly.",
-    status: "coming-soon",
+    status: "available",
+    href: "/split-pdf",
   },
   {
     icon: FileDown,
     title: "Compress PDF",
     description: "Reduce file size while keeping quality intact.",
-    status: "coming-soon",
+    status: "available",
+    href: "/compress-pdf",
   },
   {
     icon: RotateCw,
     title: "Rotate PDF",
     description: "Rotate pages to the correct orientation.",
-    status: "coming-soon",
+    status: "available",
+    href: "/rotate-pdf",
   },
   {
     icon: FileSearch,
     title: "Extract Pages",
     description: "Extract selected pages into a new PDF document.",
-    status: "coming-soon",
+    status: "available",
+    href: "/extract-pages",
   },
   {
     icon: FileX,
     title: "Delete Pages",
     description: "Remove unwanted pages from any PDF file.",
-    status: "coming-soon",
+    status: "available",
+    href: "/delete-pages",
   },
-  {
+{
     icon: ArrowUpDown,
     title: "Reorder Pages",
     description: "Drag and drop pages into any order you like.",
-    status: "coming-soon",
+    status: "available",
+    href: "/reorder-pages",
+  },
+  {
+    icon: Hash,
+    title: "Add Page Numbers",
+    description: "Add page numbers to your PDF in seconds.",
+    status: "available",
+    href: "/page-numbers",
   },
   {
     icon: FileText,
@@ -82,17 +99,19 @@ const tools: Tool[] = [
     description: "Convert Word documents into PDF format.",
     status: "coming-soon",
   },
-  {
+{
     icon: Image,
-    title: "PDF to JPG",
-    description: "Convert each PDF page into a high-quality JPG image.",
-    status: "coming-soon",
+    title: "PDF to Images",
+    description: "Convert each PDF page into a high-quality JPG or PNG image.",
+    status: "available",
+    href: "/pdf-to-images",
   },
-  {
+{
     icon: FileImage,
-    title: "JPG to PDF",
-    description: "Combine multiple JPG images into a single PDF.",
-    status: "coming-soon",
+    title: "Images to PDF",
+    description: "Combine JPG, PNG, WEBP, BMP and GIF images into a single PDF.",
+    status: "available",
+    href: "/images-to-pdf",
   },
   {
     icon: ScanLine,
@@ -100,17 +119,19 @@ const tools: Tool[] = [
     description: "Extract text from scanned PDFs and images.",
     status: "coming-soon",
   },
-  {
+{
     icon: Droplets,
     title: "Watermark PDF",
     description: "Add text or image watermarks to any PDF.",
-    status: "coming-soon",
+    status: "available",
+    href: "/watermark-pdf",
   },
   {
     icon: Shield,
     title: "Protect PDF",
     description: "Password-protect your PDF files with encryption.",
-    status: "coming-soon",
+    status: "available",
+    href: "/protect-pdf",
   },
   {
     icon: Lock,
@@ -135,8 +156,8 @@ export default function ToolsGrid() {
             const Icon = tool.icon;
             const isAvailable = tool.status === "available";
 
-            return (
-              <article key={tool.title} className={`${cardBaseClass} relative p-6`}>
+            const content = (
+              <>
                 {/* Icon */}
                 <div className={`${iconBoxClass} mb-4`}>
                   <Icon size={24} />
@@ -166,6 +187,19 @@ export default function ToolsGrid() {
                     </span>
                   )}
                 </div>
+              </>
+            );
+
+            return (
+              <article key={tool.title} className={`${cardBaseClass} relative p-6`}>
+                {isAvailable && tool.href ? (
+                  <Link
+                    href={tool.href}
+                    className="absolute inset-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                    aria-label={`Open ${tool.title} tool`}
+                  />
+                ) : null}
+                {content}
               </article>
             );
           })}

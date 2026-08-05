@@ -1,4 +1,4 @@
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument } from "@cantoo/pdf-lib";
 
 export async function mergePdf(files: File[]) {
   // Create a new empty PDF
