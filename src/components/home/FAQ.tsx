@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
+import Reveal from "@/components/ui/Reveal";
 
 type FaqItem = {
   question: string;
@@ -50,17 +51,21 @@ export default function FAQ() {
   return (
     <section id="faq" className="bg-slate-50 py-24 md:py-28">
       <div className="mx-auto max-w-3xl px-6">
-        <SectionHeading
-          title="Frequently Asked Questions"
-          subtitle="Everything you need to know about using PDFNest."
-        />
+<Reveal>
+          <SectionHeading
+            eyebrow="FAQ"
+            title="Frequently Asked Questions"
+            subtitle="Everything you need to know about using PDFNest."
+          />
+        </Reveal>
 
         {/* FAQ List */}
-        <div className="mt-16 space-y-4">
-          {faqs.map((faq, index) => {
-            const isOpen = openIndex === index;
+        <Reveal delay={0.1} className="mt-16">
+          <div className="space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openIndex === index;
 
-            return (
+              return (
               <div
                 key={faq.question}
                 className={`overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-300 ${
@@ -114,10 +119,11 @@ export default function FAQ() {
                     </p>
                   </div>
                 </div>
-              </div>
+</div>
             );
           })}
-        </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

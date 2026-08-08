@@ -15,7 +15,13 @@ type RelatedToolsProps = {
   tools: RelatedTool[];
 };
 
-export default function RelatedTools({ tools }: RelatedToolsProps) {
+export default function RelatedTools(props: RelatedToolsProps) {
+  
+
+  const { tools } = props;
+
+  
+
   return (
     <section className="pb-24">
       <div className="mt-8">

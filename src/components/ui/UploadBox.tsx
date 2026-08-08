@@ -25,7 +25,11 @@ import { toast } from "sonner";
 import { mergePdf } from "@/lib/mergePdf";
 import Button from "./Button";
 
-export default function UploadBox() {
+type UploadBoxProps = {
+  className?: string;
+};
+
+export default function UploadBox({ className = "" }: UploadBoxProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isMerging, setIsMerging] = useState(false);
   const sensors = useSensors(useSensor(PointerSensor));
@@ -122,44 +126,47 @@ const mergedBytes = await mergePdf(selectedFiles);
     0
   );
 
-  return (
-    <div className="mx-auto mt-16 max-w-3xl">
+return (
+    <div className={`w-full max-w-3xl ${className}`}>
       <div
         {...getRootProps()}
-        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition-all duration-150 sm:p-14 ${
+        className={`group cursor-pointer rounded-3xl border-2 border-dashed p-10 text-center transition-all duration-300 ease-out sm:p-14 ${
           isDragActive
-            ? "scale-[1.02] border-blue-500 bg-blue-50/80 shadow-lg shadow-blue-100"
-            : "border-blue-300 bg-white hover:border-blue-400 hover:bg-blue-50/40 hover:shadow-lg hover:shadow-blue-100/60"
+            ? "border-blue-500 bg-blue-50/80 shadow-[0_20px_50px_rgba(37,99,235,0.15)]"
+            : "border-blue-200 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:border-blue-300 hover:bg-blue-50/40 hover:shadow-[0_16px_40px_rgba(16,24,40,0.08)]"
         }`}
       >
         <input {...getInputProps()} />
 
-        <UploadCloud
-          size={60}
-          strokeWidth={1.5}
-          className={`mx-auto text-blue-600 transition-transform duration-150 ${
-            isDragActive ? "scale-110" : ""
+        <div
+          className={`mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 ring-1 ring-blue-100 transition-all duration-300 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white group-hover:ring-blue-600 ${
+            isDragActive ? "scale-110 bg-blue-600 text-white ring-blue-600" : ""
           }`}
-        />
+        >
+          <UploadCloud size={30} strokeWidth={1.5} />
+        </div>
 
-        <h2 className="mt-6 text-2xl font-bold tracking-tight text-gray-900">
-          {isDragActive
-            ? "Drop your PDFs here"
-            : "Drag & Drop your PDFs"}
+        <h2 className="mt-6 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+          {isDragActive ? "Drop your PDFs here" : "Upload PDF"}
         </h2>
 
-        <p className="mt-3 text-gray-500">
-          or click the button below
+        <p className="mt-3 text-lg text-slate-500">
+          {isDragActive ? (
+            "Release to add your files"
+          ) : (
+            <>
+              Drop files here <span className="text-slate-300">&bull;</span> or
+              choose files
+            </>
+          )}
         </p>
 
-        <p className="mt-6 text-xs text-gray-400">
-          Up to your device&apos;s memory limit &bull; No upload required &bull; PDFs only
+        <p className="mt-6 text-sm text-slate-400">
+          PDFs only &bull; No upload to servers &bull; Processes on your device
         </p>
 
         <div className="mt-8">
-          <Button onClick={open}>
-            Select PDF Files
-          </Button>
+          <Button onClick={open}>Select PDF Files</Button>
         </div>
       </div>
 

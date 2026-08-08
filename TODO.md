@@ -1,40 +1,30 @@
-# Phase 5F — PDF to Images Tool
+# PDFNest Homepage Premium Redesign — Task List
 
-- [x] Create `src/components/pdfToImages/PdfToImagesTool.tsx` (main PDF to Images tool UI + logic)
-- [x] Create `src/app/pdf-to-images/page.tsx` (route + metadata)
-- [x] Update `src/lib/toolReferences.ts` (add pdfToImages to central registry)
-- [x] Update `src/components/home/ToolsGrid.tsx` (PDF to Images → available + Link to `/pdf-to-images`)
-- [x] Update `PROJECT.md` (document the new feature)
-- [x] Run `npx tsc --noEmit` and fix every TypeScript error until it succeeds
-- [x] Run `npm run build` and fix every build error until it succeeds
-- [x] Run `npm run lint` and fix every ESLint error until it succeeds
-- [x] Verify homepage, Merge PDF, and existing tools still work
+## Setup
+- [x] Install `framer-motion`
+- [x] Update design tokens / shared UI classes in `src/lib/uiClasses.ts`
 
-# Phase 5H — Protect PDF Tool
+## Reusable UI Components
+- [x] Upgrade `src/components/ui/Button.tsx` (primary/secondary hover lift, shadow, ripple)
+- [x] Upgrade `src/components/ui/SectionHeading.tsx` (40px titles, eyebrow support)
+- [x] Create `src/components/ui/Reveal.tsx` (scroll-reveal animation wrapper)
 
-- [x] Migrate pdf-lib to @cantoo/pdf-lib (encryption support)
-- [x] Create `src/lib/pdf/protectPdf.ts` (AES-128 encryption + permission presets)
-- [x] Create `src/components/protectPdf/ProtectPdfTool.tsx` (upload, passwords, permission presets, encryption, download)
-- [x] Create `src/app/protect-pdf/page.tsx` (route + metadata)
-- [x] Update `src/lib/toolReferences.ts` (add protectPdf to central registry)
-- [x] Update `src/components/home/ToolsGrid.tsx` (Protect PDF → available + Link to `/protect-pdf`)
-- [x] Update `PROJECT.md` (document the new feature)
-- [x] Run `npx tsc --noEmit` and fix every TypeScript error until it succeeds
-- [x] Run `npm run build` and fix every build error until it succeeds
-- [x] Run `npm run lint` and fix every ESLint error until it succeeds
-- [x] Verify homepage, Merge PDF, and existing tools still work
+## Homepage Sections
+- [x] Redesign `src/components/home/Hero.tsx` (headline, big UploadBox, trust badges, floating mockup)
+- [x] Create `src/components/home/SocialProof.tsx` (4 animated stat cards)
+- [x] Redesign `src/components/home/ToolsGrid.tsx` (premium cards + Open Tool button)
+- [x] Refactor `src/components/home/WhyChoose.tsx` (4 premium cards)
+- [x] Refactor `src/components/home/HowToMerge.tsx` → generic "How It Works" (Upload → Process → Download + arrows)
+- [x] Polish `src/components/home/FAQ.tsx` (accordion spacing/animation)
 
-# Phase 5G — Images to PDF Tool
+## Layout
+- [x] Upgrade `src/components/layout/Header.tsx` (sticky, centered nav, Start Free CTA)
+- [x] Upgrade `src/components/layout/Footer.tsx` (professional SaaS footer)
 
-- [x] Create `src/lib/pdf/imagesToPdf.ts` (image loading, page sizing, fit modes, margins, embedding, PDF generation)
-- [x] Create `src/components/imagesToPdf/ImagesToPdfTool.tsx` (upload, preview, drag & drop, settings, conversion, download)
-- [x] Create `src/app/images-to-pdf/page.tsx` (route + metadata)
-- [x] Update `src/lib/toolReferences.ts` (add imagesToPdf to central registry)
-- [x] Update `src/components/home/ToolsGrid.tsx` (Images to PDF → available + Link to `/images-to-pdf`)
-- [x] Update `PROJECT.md` (document the new feature)
-- [x] Run `npx tsc --noEmit` and fix every TypeScript error until it succeeds
-- [x] Run `npm run build` and fix every build error until it succeeds
-- [x] Run `npm run lint` and fix every ESLint error until it succeeds
-- [x] Verify homepage, Merge PDF, and existing tools still work
-- [x] Runtime test: single image, 5 images, 20 images, portrait/landscape/mixed, large PNG/JPG, drag reorder, rotation, margins, page sizes, orientation, contain/cover/stretch, download & open PDF
+## Page Assembly
+- [x] Reassemble `src/app/page.tsx` with new section order
 
+## Verification
+- [x] Run `npx tsc --noEmit` (no TypeScript errors)
+- [x] Run eslint (no lint errors)
+- [x] Report any issues

@@ -23,7 +23,7 @@ export const TOOL_REFERENCES: Record<string, RelatedTool> = {
     title: "Merge PDF",
     description: "Combine multiple PDFs into one document in seconds.",
     status: "available",
-    href: "/",
+    href: "/merge-pdf",
   },
   split: {
     icon: Scissors,

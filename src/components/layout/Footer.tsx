@@ -1,4 +1,6 @@
-function GithubIcon({ className }: { className?: string }) {
+import Link from "next/link";
+
+function GithubIcon({ className = "h-4 w-4" }: { className? : string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -11,7 +13,7 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
-function XIcon({ className }: { className?: string }) {
+function XIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -24,27 +26,37 @@ function XIcon({ className }: { className?: string }) {
   );
 }
 
+function LinkedinIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+  );
+}
+
 const footerLinkClass =
   "inline-block rounded-md text-sm text-slate-400 transition-colors duration-150 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400";
 
-function LinkColumn({
-  title,
-  links,
-}: {
+type LinkColumnProps = {
   title: string;
-  links: string[];
-}) {
+  links: { label: string; href: string }[];
+};
+
+function LinkColumn({ title, links }: LinkColumnProps) {
   return (
     <nav aria-label={title}>
-      <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
-        {title}
-      </h3>
-      <ul className="mt-5 space-y-3">
+      <h3 className="text-sm font-semibold leading-6 text-white">{title}</h3>
+      <ul className="mt-4 space-y-3">
         {links.map((link) => (
-          <li key={link}>
-            <a href="#" className={footerLinkClass}>
-              {link}
-            </a>
+          <li key={link.label}>
+            <Link href={link.href} className={footerLinkClass}>
+              {link.label}
+            </Link>
           </li>
         ))}
       </ul>
@@ -52,37 +64,47 @@ function LinkColumn({
   );
 }
 
-const toolsLinks = [
-  "Merge PDF",
-  "Split PDF",
-  "Compress PDF",
-  "PDF to Word",
-  "Word to PDF",
-  "Protect PDF",
-];
-
-const resourceLinks = [
-  "Blog",
-  "Help Center",
-  "Privacy Policy",
-  "Terms",
-  "FAQ",
+const toolLinks = [
+  { label: "Merge PDF", href: "/merge-pdf" },
+  { label: "Split PDF", href: "/split-pdf" },
+  { label: "Compress PDF", href: "/compress-pdf" },
+  { label: "Rotate PDF", href: "/rotate-pdf" },
+  { label: "Protect PDF", href: "/protect-pdf" },
 ];
 
 const companyLinks = [
-  "About",
-  "Contact",
-  "Roadmap",
-  "GitHub",
+  { label: "About", href: "/#features" },
+  { label: "Contact", href: "/#faq" },
+  { label: "Roadmap", href: "/#tools" },
+  { label: "GitHub", href: "/#tools" },
+];
+
+const resourceLinks = [
+  { label: "Blog", href: "/#how-it-works" },
+  { label: "Help Center", href: "/#faq" },
+  { label: "Privacy Policy", href: "/#faq" },
+  { label: "Terms", href: "/#faq" },
+];
+
+const legalLinks = [
+  { label: "Privacy", href: "/#faq" },
+  { label: "Terms of Service", href: "/#faq" },
+  { label: "Cookie Policy", href: "/#faq" },
+];
+
+const socialLinks = [
+  { label: "GitHub", href: "#", icon: GithubIcon },
+  { label: "Twitter", href: "#", icon: XIcon },
+  { label: "LinkedIn", href: "#", icon: LinkedinIcon },
 ];
 
 export default function Footer() {
   return (
     <footer id="footer" className="bg-slate-900 text-white">
       <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
-        <div className="grid grid-cols-2 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-6">
           {/* Column 1 — Brand */}
-          <div className="col-span-2 lg:col-span-1">
+          <div className="col-span-2 lg:col-span-2">
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-lg font-bold text-white shadow-sm shadow-blue-600/40">
                 P
@@ -94,44 +116,46 @@ export default function Footer() {
 
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-slate-400">
               Fast, private and browser-based PDF tools built for everyone.
+              Your files never leave your device.
             </p>
 
             <div className="mt-6 flex gap-3">
-              <a
-                href="#"
-                aria-label="GitHub"
-                className="rounded-lg bg-slate-800 p-2.5 text-slate-300 transition-all duration-150 hover:-translate-y-0.5 hover:bg-slate-700 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
-              >
-                <GithubIcon className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                aria-label="X (Twitter)"
-                className="rounded-lg bg-slate-800 p-2.5 text-slate-300 transition-all duration-150 hover:-translate-y-0.5 hover:bg-slate-700 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
-              >
-                <XIcon className="h-4 w-4" />
-              </a>
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    aria-label={social.label}
+                    className="rounded-lg bg-slate-800 p-2.5 text-slate-300 transition-all duration-150 hover:-translate-y-0.5 hover:bg-slate-700 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+                  >
+<Icon className="h-4 w-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
-          {/* Column 2 — Tools */}
-          <LinkColumn title="Tools" links={toolsLinks} />
-
-          {/* Column 3 — Resources */}
-          <LinkColumn title="Resources" links={resourceLinks} />
-
-          {/* Column 4 — Company */}
+          {/* Link Columns */}
+          <LinkColumn title="Tools" links={toolLinks} />
           <LinkColumn title="Company" links={companyLinks} />
+          <LinkColumn title="Resources" links={resourceLinks} />
+          <LinkColumn title="Legal" links={legalLinks} />
         </div>
 
         {/* Bottom Bar */}
         <div className="mt-16 border-t border-slate-800 pt-8">
-          <p className="text-sm text-slate-500">
-            © 2026 PDFNest. Built with Next.js and PDF-lib.
-          </p>
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <p className="text-sm text-slate-500">
+              © {new Date().getFullYear()} PDFNest. Built with Next.js and
+              PDF-lib.
+            </p>
+            <p className="text-sm text-slate-500">
+              Made with care for a faster, private web.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
-

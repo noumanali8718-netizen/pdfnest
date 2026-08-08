@@ -18,9 +18,11 @@ import {
   Droplets,
   Shield,
   Lock,
+  ArrowRight,
 } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { cardBaseClass, iconBoxClass } from "@/lib/uiClasses";
+import Reveal from "@/components/ui/Reveal";
 
 type Tool = {
   icon: typeof Files;
@@ -36,7 +38,7 @@ const tools: Tool[] = [
     title: "Merge PDF",
     description: "Combine multiple PDFs into one document in seconds.",
     status: "available",
-    href: "/",
+    href: "/merge-pdf",
   },
   {
     icon: Scissors,
@@ -73,7 +75,7 @@ const tools: Tool[] = [
     status: "available",
     href: "/delete-pages",
   },
-{
+  {
     icon: ArrowUpDown,
     title: "Reorder Pages",
     description: "Drag and drop pages into any order you like.",
@@ -99,14 +101,14 @@ const tools: Tool[] = [
     description: "Convert Word documents into PDF format.",
     status: "coming-soon",
   },
-{
+  {
     icon: Image,
     title: "PDF to Images",
     description: "Convert each PDF page into a high-quality JPG or PNG image.",
     status: "available",
     href: "/pdf-to-images",
   },
-{
+  {
     icon: FileImage,
     title: "Images to PDF",
     description: "Combine JPG, PNG, WEBP, BMP and GIF images into a single PDF.",
@@ -119,7 +121,7 @@ const tools: Tool[] = [
     description: "Extract text from scanned PDFs and images.",
     status: "coming-soon",
   },
-{
+  {
     icon: Droplets,
     title: "Watermark PDF",
     description: "Add text or image watermarks to any PDF.",
@@ -145,62 +147,70 @@ export default function ToolsGrid() {
   return (
     <section id="tools" className="bg-white py-24 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        <SectionHeading
-          title="Everything you need to work with PDFs"
-          subtitle="Powerful PDF tools designed for speed, privacy and simplicity."
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="PDF Tools"
+            title="Everything you need to work with PDFs"
+            subtitle="Powerful PDF tools designed for speed, privacy and simplicity."
+          />
+        </Reveal>
 
         {/* Tools Grid */}
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {tools.map((tool) => {
+          {tools.map((tool, index) => {
             const Icon = tool.icon;
             const isAvailable = tool.status === "available";
 
-            const content = (
-              <>
-                {/* Icon */}
-                <div className={`${iconBoxClass} mb-4`}>
-                  <Icon size={24} />
-                </div>
-
-                {/* Title */}
-                <h3 className="text-base font-semibold text-gray-900">
-                  {tool.title}
-                </h3>
-
-                {/* Description */}
-                <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                  {tool.description}
-                </p>
-
-                {/* Status Badge */}
-                <div className="mt-4">
-                  {isAvailable ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-100">
-                      <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                      Available
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500 ring-1 ring-gray-200">
-                      <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
-                      Coming Soon
-                    </span>
-                  )}
-                </div>
-              </>
-            );
-
             return (
-              <article key={tool.title} className={`${cardBaseClass} relative p-6`}>
-                {isAvailable && tool.href ? (
-                  <Link
-                    href={tool.href}
-                    className="absolute inset-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                    aria-label={`Open ${tool.title} tool`}
-                  />
-                ) : null}
-                {content}
-              </article>
+              <Reveal key={tool.title} delay={(index % 4) * 0.06}>
+                <article
+                  className={`${cardBaseClass} relative flex h-full flex-col p-6`}
+                >
+                  {isAvailable && tool.href ? (
+                    <Link
+                      href={tool.href}
+                      className="absolute inset-0 z-10 rounded-3xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                      aria-label={`Open ${tool.title} tool`}
+                    />
+                  ) : null}
+
+                  {/* Icon */}
+                  <div className={`${iconBoxClass} mb-5`}>
+                    <Icon size={24} />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-[22px] font-semibold text-gray-900">
+                    {tool.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="mt-2 flex-1 text-[15px] leading-relaxed text-slate-500">
+                    {tool.description}
+                  </p>
+
+                  {/* Footer */}
+                  <div className="mt-5 flex items-center justify-between">
+                    {isAvailable ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-100">
+                        <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                        Available
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500 ring-1 ring-slate-200">
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                        Coming Soon
+                      </span>
+                    )}
+
+                    {isAvailable && tool.href ? (
+                      <span className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 transition-all duration-200 group-hover:gap-2">
+                        Open Tool <ArrowRight size={15} />
+                      </span>
+                    ) : null}
+                  </div>
+                </article>
+              </Reveal>
             );
           })}
         </div>
@@ -208,4 +218,3 @@ export default function ToolsGrid() {
     </section>
   );
 }
-
