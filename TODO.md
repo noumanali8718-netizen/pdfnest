@@ -24,7 +24,31 @@
 ## Page Assembly
 - [x] Reassemble `src/app/page.tsx` with new section order
 
-## Verification
+## Verification (homepage)
 - [x] Run `npx tsc --noEmit` (no TypeScript errors)
 - [x] Run eslint (no lint errors)
-- [x] Report any issues
+- [x] `npx next build` succeeded
+
+---
+
+# Merge PDF Tool — Production-Hardening Audit
+
+## Tasks
+- [x] 1. Remove temporary console.log debugging from `RelatedTools.tsx`
+- [x] 2. Clean up formatting/indentation in `UploadBox.tsx` (no behavior change)
+- [x] 3. Replace fragile `file.name + index` dnd-kit IDs with stable client-side IDs; preserve File objects & merge order
+- [x] 4. Add `onDropRejected` for clear non-PDF validation error; preserve react-dropzone behavior
+- [x] 5. Keep minimum two-PDF requirement + existing error toast
+- [x] 6. Safe merge error handling (no stack traces; no production debug logging)
+- [x] 7. Generic message for unreadable/password-protected/corrupted PDFs
+- [x] 8. Keep disabled/loading state; prevent duplicate merge submissions
+- [x] 9. Preserve download: `merged.pdf`, `application/pdf`, browser-side `saveAs`
+- [x] 10. Accessibility: keyboard upload, meaningful remove labels, non-drag reorder (up/down buttons), visible focus
+- [x] 11. Mobile responsiveness review (no concrete layout issues requiring changes)
+- [x] 12. Memory safety: graceful handling of large/problematic PDFs (no arbitrary size limits)
+- [x] 13. No backend/database/API/analytics/external service added
+
+## Verification (merge tool)
+- [x] Run `npx tsc --noEmit`
+- [x] Run `npm run lint`
+- [x] Run `npm run build`

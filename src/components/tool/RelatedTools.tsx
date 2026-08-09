@@ -16,11 +16,7 @@ type RelatedToolsProps = {
 };
 
 export default function RelatedTools(props: RelatedToolsProps) {
-  
-
   const { tools } = props;
-
-  
 
   return (
     <section className="pb-24">
