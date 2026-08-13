@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
@@ -27,7 +27,7 @@ import {
   splitPdfEveryN,
   type SplitMode,
 } from "@/lib/pdf/split";
-import { iconBoxClass } from "@/lib/uiClasses";
+import { iconBoxClass, primaryButtonClass } from "@/lib/uiClasses";
 
 const BASE_NAME = "split";
 
@@ -37,7 +37,7 @@ function splitModes() {
       id: "range" as const,
       icon: Layers,
       title: "Page range",
-      description: "Extract pages 1-5, 3-9, 10-12",
+      description: "Extract a page range, e.g. 1-5",
     },
     {
       id: "single" as const,
@@ -68,6 +68,8 @@ export default function SplitTool() {
   const [pageInput, setPageInput] = useState("");
   const [intervalInput, setIntervalInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const processingRef = useRef(false);
+  const lastCompletedRef = useRef(0);
 
   useEffect(() => {
     if (!file) return;
@@ -93,14 +95,14 @@ export default function SplitTool() {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const next = acceptedFiles[0];
     if (!next) return;
-    if (next.type !== "application/pdf" && !next.name.toLowerCase().endsWith(".pdf")) {
-      toast.error("Please upload a valid PDF file.");
-      return;
-    }
     setFile(next);
     setRangeInput("");
     setPageInput("");
     setIntervalInput("");
+  }, []);
+
+  const onDropRejected = useCallback(() => {
+    toast.error("Please upload a valid PDF file.");
   }, []);
 
   const {
@@ -109,6 +111,7 @@ export default function SplitTool() {
     isDragActive,
   } = useDropzone({
     onDrop,
+    onDropRejected,
     multiple: false,
     accept: { "application/pdf": [".pdf"] },
     noClick: false,
@@ -127,79 +130,90 @@ export default function SplitTool() {
       return;
     }
 
+    if (processingRef.current || isProcessing || Date.now() - lastCompletedRef.current < 800) {
+      return;
+    }
+    processingRef.current = true;
+
     let outputName = BASE_NAME;
-    let bytes: Uint8Array<ArrayBuffer> | Uint8Array<ArrayBuffer>[];
+    let bytes: Uint8Array<ArrayBuffer> | Uint8Array<ArrayBuffer>[] | null = null;
 
     try {
       setIsProcessing(true);
 
-      if (mode === "range") {
-        const match = rangeInput.trim().match(/^(\d+)\s*-\s*(\d+)$/);
-        if (!match) {
-          toast.error("Invalid page range. Use a format like 1-5.");
-          return;
-        }
-        const start = parseInt(match[1], 10);
-        const end = parseInt(match[2], 10);
-        if (start < 1 || end < start || !pageCount || end > pageCount) {
-          toast.error("Invalid page range for this PDF.");
-          return;
-        }
-        bytes = await splitPdfRange(file, start, end);
-        outputName = `pages-${start}-to-${end}`;
-      } else if (mode === "single") {
-        const page = parseInt(pageInput.trim(), 10);
-        if (!Number.isInteger(page) || page < 1 || !pageCount || page > pageCount) {
-          toast.error("Invalid page number for this PDF.");
-          return;
-        }
-        bytes = await splitPdfSinglePage(file, page);
-        outputName = `page-${page}`;
-      } else if (mode === "every") {
-        bytes = await splitPdfEveryPage(file);
-      } else {
-        const interval = parseInt(intervalInput.trim(), 10);
-        if (!Number.isInteger(interval) || interval < 1 || !pageCount || interval > pageCount) {
-          toast.error("Invalid interval. Enter a number between 1 and the total page count.");
-          return;
-        }
-        bytes = await splitPdfEveryN(file, interval);
-        outputName = `every-${interval}-pages`;
-      }
-    } catch {
-      toast.error("PDF could not be processed.");
-      return;
-    } finally {
-      setIsProcessing(false);
-    }
-
-    try {
-      if (Array.isArray(bytes)) {
-        if (bytes.length === 0) {
-          toast.error("PDF could not be processed.");
-          return;
-        }
-
-        if (bytes.length === 1) {
-          const blob = new Blob([bytes[0]], { type: "application/pdf" });
-          saveAs(blob, `${BASE_NAME}.pdf`);
+      try {
+        if (mode === "range") {
+          const match = rangeInput.trim().match(/^(\d+)\s*-\s*(\d+)$/);
+          if (!match) {
+            toast.error("Invalid page range. Use a format like 1-5.");
+            return;
+          }
+          const start = parseInt(match[1], 10);
+          const end = parseInt(match[2], 10);
+          if (start < 1 || end < start || !pageCount || end > pageCount) {
+            toast.error("Invalid page range for this PDF.");
+            return;
+          }
+          bytes = await splitPdfRange(file, start, end);
+          outputName = `pages-${start}-to-${end}`;
+        } else if (mode === "single") {
+          const page = parseInt(pageInput.trim(), 10);
+          if (!Number.isInteger(page) || page < 1 || !pageCount || page > pageCount) {
+            toast.error("Invalid page number for this PDF.");
+            return;
+          }
+          bytes = await splitPdfSinglePage(file, page);
+          outputName = `page-${page}`;
+        } else if (mode === "every") {
+          bytes = await splitPdfEveryPage(file);
         } else {
-          const zip = new JSZip();
-          const baseName = file.name.replace(/\.pdf$/i, "");
-          bytes.forEach((byte, index) => {
-            zip.file(`${baseName}-${index + 1}.pdf`, byte);
-          });
-          const zipBlob = await zip.generateAsync({ type: "blob" });
-          saveAs(zipBlob, `${outputName}.zip`);
+          const interval = parseInt(intervalInput.trim(), 10);
+          if (!Number.isInteger(interval) || interval < 1 || !pageCount || interval > pageCount) {
+            toast.error("Invalid interval. Enter a number between 1 and the total page count.");
+            return;
+          }
+          bytes = await splitPdfEveryN(file, interval);
+          outputName = `every-${interval}-pages`;
         }
-        toast.success("Split completed successfully!");
-      } else {
-        const blob = new Blob([bytes], { type: "application/pdf" });
-        saveAs(blob, `${outputName}.pdf`);
-        toast.success("Split completed successfully!");
+      } catch {
+        toast.error("PDF could not be processed.");
+        return;
       }
-    } catch {
-      toast.error("Could not download the split files.");
+
+      if (!bytes) return;
+
+      try {
+        if (Array.isArray(bytes)) {
+          if (bytes.length === 0) {
+            toast.error("PDF could not be processed.");
+            return;
+          }
+
+          if (bytes.length === 1) {
+            const blob = new Blob([bytes[0]], { type: "application/pdf" });
+            saveAs(blob, `${BASE_NAME}.pdf`);
+          } else {
+            const zip = new JSZip();
+            const baseName = file.name.replace(/\.pdf$/i, "");
+            bytes.forEach((byte, index) => {
+              zip.file(`${baseName}-${index + 1}.pdf`, byte);
+            });
+            const zipBlob = await zip.generateAsync({ type: "blob" });
+            saveAs(zipBlob, `${outputName}.zip`);
+          }
+          toast.success("Split completed successfully!");
+        } else {
+          const blob = new Blob([bytes], { type: "application/pdf" });
+          saveAs(blob, `${outputName}.pdf`);
+          toast.success("Split completed successfully!");
+        }
+      } catch {
+        toast.error("Could not download the split files.");
+      }
+    } finally {
+      lastCompletedRef.current = Date.now();
+      processingRef.current = false;
+      setIsProcessing(false);
     }
   };
 
@@ -214,8 +228,12 @@ export default function SplitTool() {
     <div className="mx-auto max-w-3xl">
       {/* Upload zone */}
       <div
-        {...getRootProps()}
-        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition ${
+        {...getRootProps({
+          role: "button",
+          tabIndex: 0,
+          "aria-label": "Upload a PDF file",
+        })}
+        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${
           isDragActive
             ? "border-blue-600 bg-blue-50"
             : "border-blue-300 bg-white"
@@ -230,7 +248,7 @@ export default function SplitTool() {
           or click the button below to select one PDF
         </p>
         <div className="mt-8">
-          <Button onClick={() => undefined}>Select PDF File</Button>
+          <span className={primaryButtonClass}>Select PDF File</span>
         </div>
       </div>
 

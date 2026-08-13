@@ -8,14 +8,11 @@ export async function getPageCount(file: File): Promise<number> {
   return pdf.getPageCount();
 }
 
-async function newDocumentWithPages(
-  source: File,
+async function createPdfFromLoadedSource(
+  sourcePdf: PDFDocument,
   pageIndices: number[]
 ): Promise<Uint8Array<ArrayBuffer>> {
-  const fileBytes = await source.arrayBuffer();
-  const sourcePdf = await PDFDocument.load(fileBytes);
   const outputPdf = await PDFDocument.create();
-
   const copiedPages = await outputPdf.copyPages(sourcePdf, pageIndices);
   copiedPages.forEach((page) => outputPdf.addPage(page));
 
@@ -23,6 +20,15 @@ async function newDocumentWithPages(
   // Copy into a fresh ArrayBuffer-backed Uint8Array so the bytes are
   // guaranteed to be a valid BlobPart (pdf-lib returns ArrayBufferLike).
   return new Uint8Array(saved);
+}
+
+async function newDocumentWithPages(
+  source: File,
+  pageIndices: number[]
+): Promise<Uint8Array<ArrayBuffer>> {
+  const fileBytes = await source.arrayBuffer();
+  const sourcePdf = await PDFDocument.load(fileBytes);
+  return createPdfFromLoadedSource(sourcePdf, pageIndices);
 }
 
 /** Extract a page range (1-based inclusive) into a single new PDF. */
@@ -44,7 +50,7 @@ export async function splitPdfRange(
     pageIndices.push(i - 1);
   }
 
-  return newDocumentWithPages(file, pageIndices);
+  return createPdfFromLoadedSource(pdf, pageIndices);
 }
 
 /** Extract a single page (1-based) into its own PDF. */
@@ -60,7 +66,7 @@ export async function splitPdfSinglePage(
     throw new Error("Invalid page number");
   }
 
-  return newDocumentWithPages(file, [pageNumber - 1]);
+  return createPdfFromLoadedSource(pdf, [pageNumber - 1]);
 }
 
 /** Split every page into its own PDF. Returns an array of PDF bytes. */
@@ -68,12 +74,12 @@ export async function splitPdfEveryPage(
   file: File
 ): Promise<Uint8Array<ArrayBuffer>[]> {
   const fileBytes = await file.arrayBuffer();
-  const pdf = await PDFDocument.load(fileBytes);
-  const totalPages = pdf.getPageCount();
+  const sourcePdf = await PDFDocument.load(fileBytes);
+  const totalPages = sourcePdf.getPageCount();
 
   const results: Uint8Array<ArrayBuffer>[] = [];
   for (let i = 1; i <= totalPages; i++) {
-    results.push(await newDocumentWithPages(file, [i - 1]));
+    results.push(await createPdfFromLoadedSource(sourcePdf, [i - 1]));
   }
 
   return results;
@@ -85,8 +91,8 @@ export async function splitPdfEveryN(
   chunkSize: number
 ): Promise<Uint8Array<ArrayBuffer>[]> {
   const fileBytes = await file.arrayBuffer();
-  const pdf = await PDFDocument.load(fileBytes);
-  const totalPages = pdf.getPageCount();
+  const sourcePdf = await PDFDocument.load(fileBytes);
+  const totalPages = sourcePdf.getPageCount();
 
   if (chunkSize < 1 || chunkSize > totalPages) {
     throw new Error("Invalid interval");
@@ -99,7 +105,7 @@ export async function splitPdfEveryN(
     for (let i = start; i <= end; i++) {
       pageIndices.push(i - 1);
     }
-    results.push(await newDocumentWithPages(file, pageIndices));
+    results.push(await createPdfFromLoadedSource(sourcePdf, pageIndices));
   }
 
   return results;
