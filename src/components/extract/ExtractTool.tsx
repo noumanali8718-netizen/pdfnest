@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { saveAs } from "file-saver";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ import {
 import Button from "@/components/ui/Button";
 import { formatFileSize } from "@/lib/fileUtils";
 import { getPageCount, extractPages } from "@/lib/pdf/split";
-import { iconBoxClass } from "@/lib/uiClasses";
+import { iconBoxClass, primaryButtonClass } from "@/lib/uiClasses";
 
 type ExtractMode = "range" | "custom" | "odd" | "even";
 
@@ -31,7 +31,7 @@ const MODES: {
     id: "range",
     icon: Layers,
     title: "Page Range",
-    description: "Extract a range like 1-5, 3-9 or 10-15",
+    description: "Extract a page range, e.g. 1-5",
   },
   {
     id: "custom",
@@ -60,6 +60,8 @@ export default function ExtractTool() {
   const [rangeInput, setRangeInput] = useState("");
   const [customInput, setCustomInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const processingRef = useRef(false);
+  const lastCompletedRef = useRef(0);
 
   useEffect(() => {
     if (!file) return;
@@ -85,26 +87,23 @@ export default function ExtractTool() {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const next = acceptedFiles[0];
     if (!next) return;
-    if (
-      next.type !== "application/pdf" &&
-      !next.name.toLowerCase().endsWith(".pdf")
-    ) {
-      toast.error("Please upload a valid PDF file.");
-      return;
-    }
     setFile(next);
     setRangeInput("");
     setCustomInput("");
     setMode("range");
   }, []);
 
+  const onDropRejected = useCallback(() => {
+    toast.error("Please upload a valid PDF file.");
+  }, []);
+
   const {
     getRootProps,
     getInputProps,
-    open,
     isDragActive,
   } = useDropzone({
     onDrop,
+    onDropRejected,
     multiple: false,
     accept: { "application/pdf": [".pdf"] },
     noClick: false,
@@ -184,21 +183,43 @@ export default function ExtractTool() {
       return;
     }
 
+    if (
+      processingRef.current ||
+      isProcessing ||
+      Date.now() - lastCompletedRef.current < 800
+    ) {
+      return;
+    }
+
     const pages = resolvePageNumbers();
     if (!pages) return;
 
+    processingRef.current = true;
+
     try {
       setIsProcessing(true);
-      const bytes = await extractPages(file, pages);
-      const blob = new Blob([bytes], { type: "application/pdf" });
-      const baseName = file.name.replace(/\.pdf$/i, "") ?? "document";
-      saveAs(blob, `${baseName}-extracted.pdf`);
-      toast.success(
-        `Extracted ${pages.length} page${pages.length > 1 ? "s" : ""} successfully!`
-      );
-    } catch {
-      toast.error("PDF could not be processed.");
+
+      let bytes: Uint8Array<ArrayBuffer>;
+      try {
+        bytes = await extractPages(file, pages);
+      } catch {
+        toast.error("PDF could not be processed.");
+        return;
+      }
+
+      try {
+        const blob = new Blob([bytes], { type: "application/pdf" });
+        const baseName = file.name.replace(/\.pdf$/i, "") || "document";
+        saveAs(blob, `${baseName}-extracted.pdf`);
+        toast.success(
+          `Extracted ${pages.length} page${pages.length > 1 ? "s" : ""} successfully!`
+        );
+      } catch {
+        toast.error("Could not download the extracted file.");
+      }
     } finally {
+      lastCompletedRef.current = Date.now();
+      processingRef.current = false;
       setIsProcessing(false);
     }
   };
@@ -213,8 +234,12 @@ export default function ExtractTool() {
     <div className="mx-auto max-w-3xl">
       {/* Upload zone */}
       <div
-        {...getRootProps()}
-        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition ${
+        {...getRootProps({
+          role: "button",
+          tabIndex: 0,
+          "aria-label": "Upload a PDF file",
+        })}
+        className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${
           isDragActive
             ? "border-blue-600 bg-blue-50"
             : "border-blue-300 bg-white"
@@ -229,7 +254,7 @@ export default function ExtractTool() {
           or click the button below to select one PDF
         </p>
         <div className="mt-8">
-          <Button onClick={open}>Select PDF File</Button>
+          <span className={primaryButtonClass}>Select PDF File</span>
         </div>
       </div>
 
@@ -268,7 +293,11 @@ export default function ExtractTool() {
           <h3 className="text-lg font-semibold text-gray-900">
             Extraction method
           </h3>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div
+            role="radiogroup"
+            aria-label="Extraction mode"
+            className="mt-4 grid gap-4 sm:grid-cols-2"
+          >
             {MODES.map((option) => {
               const Icon = option.icon;
               const isSelected = mode === option.id;
